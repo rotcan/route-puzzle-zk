@@ -1,0 +1,29 @@
+div.player{
+    width:90%; 
+    margin:0px auto;
+    text-align:left;
+}
+
+div.player label{
+    width: 150px;
+    display: inline-block;
+}
+
+button{
+    padding: 5px;
+    background-color: cadetblue;
+    border: none;
+    margin: 0px 2px;
+}
+
+.InitGame{
+    float:right;
+}
+
+.address{
+   
+}
+
+.right{float: right;}
+
+p{margin:0px;text-align: left;padding-left:50px}
