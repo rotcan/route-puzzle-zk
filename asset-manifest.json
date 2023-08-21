@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/route-puzzle-zk/static/css/main.9d5615cf.css",
+    "main.js": "/route-puzzle-zk/static/js/main.6de1900b.js",
+    "static/js/651.a19f6ef4.chunk.js": "/route-puzzle-zk/static/js/651.a19f6ef4.chunk.js",
+    "index.html": "/route-puzzle-zk/index.html",
+    "main.9d5615cf.css.map": "/route-puzzle-zk/static/css/main.9d5615cf.css.map",
+    "main.6de1900b.js.map": "/route-puzzle-zk/static/js/main.6de1900b.js.map",
+    "651.a19f6ef4.chunk.js.map": "/route-puzzle-zk/static/js/651.a19f6ef4.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9d5615cf.css",
+    "static/js/main.6de1900b.js"
+  ]
+}
