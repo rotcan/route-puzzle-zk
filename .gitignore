@@ -5,8 +5,10 @@ target
 **/*.rs.bk
 node_modules
 test-ledger
-**/*.rics
+**/*.r1cs
 **/*.sym
 **/*.ptau
 Cargo.lock
 todo
+yarn.lock
+package-lock.json
