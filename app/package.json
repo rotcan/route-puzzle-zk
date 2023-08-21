@@ -1,6 +1,7 @@
 {
-  "name": "app",
+  "name": "route-puzzle-zk",
   "version": "0.1.0",
+  "homepage": "https://rotcan.github.io/route-puzzle-zk",
   "private": true,
   "dependencies": {
     "@metaplex-foundation/beet": "^0.7.1",
@@ -29,6 +30,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy":"npm run build",
+    "deploy":"gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -62,6 +65,7 @@
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
     "file-loader": "^6.2.0",
+    "gh-pages": "^6.0.0",
     "html-loader": "^4.2.0",
     "html-webpack-plugin": "^5.0.0-alpha.10",
     "json-loader": "^0.5.7",
