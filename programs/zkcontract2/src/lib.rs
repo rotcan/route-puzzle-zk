@@ -82,6 +82,14 @@ pub mod zkcontract2 {
         // if ctx.accounts.game_data.move_counter>0 {
             ctx.accounts.game_data.last_pos=ctx.accounts.game_data.current_pos;
         // }
+
+        //Check time
+        let delta_time=get_unix_timestamp().checked_sub(ctx.accounts.game_data.move_timestamp).unwrap();
+        assert_true(delta_time > ctx.accounts.game_data.move_time as i64,
+            ProgramError::from(GameError::TimeoutError),
+            "Other players turn"
+        )?;
+
         ctx.accounts.game_data.current_pos=new_pos;
         ctx.accounts.game_data.move_counter+=1;
         ctx.accounts.game_data.player_turn=Players::Player1;
@@ -104,6 +112,13 @@ pub mod zkcontract2 {
             ProgramError::from(GameError::WrongHashError),
             "Hash does not match",
         )?;
+        //Check time
+         //Check time
+         let delta_time=get_unix_timestamp().checked_sub(ctx.accounts.game_data.move_timestamp).unwrap();
+         assert_true(delta_time > ctx.accounts.game_data.move_time as i64,
+             ProgramError::from(GameError::TimeoutError),
+             "Other players turn"
+         )?;
         let _x1=get_last_element(&signals[5]);
         let _y1=get_last_element(&signals[6]);
         let _x2=get_last_element(&signals[7]);

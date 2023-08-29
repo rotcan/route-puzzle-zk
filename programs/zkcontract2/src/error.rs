@@ -17,6 +17,9 @@ pub enum GameError{
     WrongHashError,
     #[msg("Wrong Player")]
     OtherPlayersTurn,
+    #[msg("Timeout")]
+    TimeoutError,
+    
 }
 
 
