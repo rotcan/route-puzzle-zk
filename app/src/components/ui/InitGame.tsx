@@ -165,7 +165,7 @@ const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefin
             
             //const contractData= await getContractData({connection});
 
-            console.log("proof",proof,contractData);
+            console.log("proof",JSON.stringify(proof),contractData);
             
             console.log("gridPos",window.p1GridPos);
             setHash(proof.pub);

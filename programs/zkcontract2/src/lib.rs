@@ -1,7 +1,6 @@
 use crate::state::{Point,GameState,Players,PlayerTurnResult,PREFIX,CURRENT_GAME_PREFIX};
 use crate::util::{verify_init_proof,verify_player_move_proof,get_last_element,assert_true,get_unix_timestamp};
 use crate::error::{GameError};
-
 use anchor_lang::{prelude::*};
 
 pub mod state;
@@ -231,6 +230,7 @@ pub struct CurrentGame{
 }
 
 #[derive(Accounts)]
+#[instruction()]
 pub struct ContractSetup<'info>{
     #[account(
         init, 
@@ -339,3 +339,19 @@ pub struct ForfeitGame<'info>{
 
     pub system_program: Program<'info, System>,
 }
+
+
+
+
+// pub fn get_setup_instruction(
+//     accounts: Context<ContractSetup>,
+// ) -> Instruction {
+//     let instruction = instruction::ContractSetup {
+        
+//     };
+//     Instruction::new_with_bytes(
+//         ID,
+//         &instruction.data(),
+//         accounts.to_account_metas(),
+//     )
+// }

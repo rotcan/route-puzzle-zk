@@ -57,9 +57,11 @@ export class MainPGame extends Phaser.Scene
     }
     preload ()
     {
-        this.load.image('p1', '../../assets/p1.png');
-        this.load.image('p2', '../../assets/p2.png');
-        this.load.image('pselect', '../../assets/pselect.png');
+        //@ts-ignore
+        const baseUrl=window.PUBLIC_URL;
+        this.load.image('p1', `../..${baseUrl}/assets/p1.png`);
+        this.load.image('p2', `../..${baseUrl}/assets/p2.png`);
+        this.load.image('pselect', `../..${baseUrl}/assets/pselect.png`);
     }
 
     create ()

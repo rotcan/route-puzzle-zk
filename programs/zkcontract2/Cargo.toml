@@ -14,6 +14,7 @@ no-idl = []
 no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
+test-sbf=[]
 
 [dependencies]
 anchor-lang = "0.28.0"
@@ -23,4 +24,12 @@ ark-bn254 = "0.3.0"
 ark-std = { version = "^0.3.0", default-features = false }
 groth16-solana = "0.0.2"
 thiserror = "1.0.46"
+
+[dev-dependencies]
+async-trait = "0.1.73"
+borsh = "0.10.3"
+serial_test = "2.0.0"
+solana-program = "1.16.10"
+solana-program-test = "1.16.10"
+solana-sdk = "1.16.10"
 
