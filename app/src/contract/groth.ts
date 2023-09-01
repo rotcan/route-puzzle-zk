@@ -4,13 +4,14 @@ import moveVerificationKey from "./zk/verification_key_move.json";
 const snarkjs = window.snarkjs;
 
 //const baseUrl="http://localhost:3000/";
-const baseUrl="./";
+//@ts-ignore
+const baseUrl=window.PUBLIC_URL ?? ".";
 //const baseUrl="../../";
 // const wasmFile=baseUrl+"circuits/analyze_move/analyze_move_js/analyze_move.wasm";
-const initWasmFile=baseUrl+"zk/init.wasm";
-const initzKeyFile=baseUrl+"zk/init_0001.zkey";
-const verifyWasmFile=baseUrl+"zk/analyze_move.wasm";
-const verifyzKeyFile=baseUrl+"zk/analyze_move_0001.zkey";
+const initWasmFile=baseUrl+"/zk/init.wasm";
+const initzKeyFile=baseUrl+"/zk/init_0001.zkey";
+const verifyWasmFile=baseUrl+"/zk/analyze_move.wasm";
+const verifyzKeyFile=baseUrl+"/zk/analyze_move_0001.zkey";
 //const zKey=baseUrl+"circuits/analyze_move/analyze_move_0001.zkey";
 // import wasmFile from '../../circuits/init/init_js/input.wasm';
 
@@ -141,9 +142,9 @@ const convertProofBNtoIntArray64=(val: any):number[]=>{
 
 const makeInitGrothProof = async (_proofInput: any) => {
     //await snarkjs.wtns.
-	const { proof, publicSignals } = await snarkjs.groth16.fullProve( _proofInput,
+    const { proof, publicSignals } = await snarkjs.groth16.fullProve( _proofInput,
      initWasmFile, initzKeyFile);
-	return { proof, publicSignals };
+    return { proof, publicSignals };
 };
 
 
