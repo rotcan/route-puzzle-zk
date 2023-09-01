@@ -100,9 +100,14 @@ export const CurrentGameLayout = struct<CurrentGame>([
   export const getContractData=async({connection}:{connection: Connection}):Promise<ContractData | undefined>=>{
     const address=contractDataAddress();
     const data= await connection.getAccountInfo(new PublicKey(address));
-    const object=ContractSetupLayout.decode(data!.data);
+    if(data){
+      console.log("address",address);
+      const object=ContractSetupLayout.decode(data!.data);
+      // console.log("object",address,object);
+      return object;
+    }
     // console.log("object",address,object);
-    return object;
+    return undefined;
   } 
 
   export const getGameData=async({connection,counter}:{connection: Connection,counter:string}):Promise<GameData|undefined>=>{
