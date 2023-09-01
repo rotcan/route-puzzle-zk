@@ -85,7 +85,7 @@ pub mod zkcontract2 {
 
         //Check time
         let delta_time=get_unix_timestamp().checked_sub(ctx.accounts.game_data.move_timestamp).unwrap();
-        assert_true(delta_time > ctx.accounts.game_data.move_time as i64,
+        assert_true(delta_time <= ctx.accounts.game_data.move_time as i64,
             ProgramError::from(GameError::TimeoutError),
             "Other players turn"
         )?;
@@ -115,7 +115,7 @@ pub mod zkcontract2 {
         //Check time
          //Check time
          let delta_time=get_unix_timestamp().checked_sub(ctx.accounts.game_data.move_timestamp).unwrap();
-         assert_true(delta_time > ctx.accounts.game_data.move_time as i64,
+         assert_true(delta_time <= ctx.accounts.game_data.move_time as i64,
              ProgramError::from(GameError::TimeoutError),
              "Other players turn"
          )?;
