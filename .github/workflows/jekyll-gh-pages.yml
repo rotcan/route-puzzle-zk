@@ -52,7 +52,7 @@ jobs:
       # This step runs `npm ci` to install any dependencies listed in your `package.json` file.
       - name: Run npm
         run: |
-          npm ci
+          npm i
           npm run build --if-present
       # This step runs the `test` script that is specified under the `scripts` key in your `package.json` file.
       - name: Build with Jekyll
