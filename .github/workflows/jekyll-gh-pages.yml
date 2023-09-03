@@ -21,6 +21,10 @@ concurrency:
   group: "pages"
   cancel-in-progress: false
 
+env:
+  REACT_APP_ADMIN: ${{env.REACT_APP_ADMIN}}
+  REACT_APP_URL: ${{env.REACT_APP_URL}}
+
 jobs:
   # Build job
   build:
@@ -30,6 +34,12 @@ jobs:
         uses: actions/checkout@v3
       - name: Setup Pages
         uses: actions/configure-pages@v3
+      - name: Store variables
+        run: |
+          cd app
+          touch .env
+          echo 'REACT_APP_ADMIN=${{ env.REACT_APP_ADMIN }}' >> .env
+          echo 'REACT_APP_URL=${{ env.REACT_APP_URL }}' >> .env
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
