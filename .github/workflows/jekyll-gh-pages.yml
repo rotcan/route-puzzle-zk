@@ -28,14 +28,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+      - name: Show Admin
+        run: echo "ADMIN is ${{vars.REACT_APP_ADMIN}}"
+      - name: Show Url
+        run: echo "ADMIN is ${{vars.REACT_APP_URL}}"
       - name: Setup Pages
         uses: actions/configure-pages@v3
-      - name: Store variables
-        run: |
-          cd ./app/dist/
-          touch .env
-          echo 'REACT_APP_ADMIN=${{ env.REACT_APP_ADMIN }}' >> .env
-          echo 'REACT_APP_URL=${{ env.REACT_APP_URL }}' >> .env
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
