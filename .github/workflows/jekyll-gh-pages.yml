@@ -44,14 +44,14 @@ jobs:
       - name: Show Url
         run: echo "Url is ${{vars.REACT_APP_URL}}"
       - name: Create env file
-      - run: | 
+        run: | 
           cd app
           touch .env
           echo 'REACT_APP_URL=${{vars.REACT_APP_URL}}' > .env
           echo 'REACT_APP_ADMIN=${{vars.REACT_APP_ADMIN}}' > .env
       # This step runs `npm ci` to install any dependencies listed in your `package.json` file.
       - name: Run npm
-      - run: |
+        run: |
           npm ci
           npm run build --if-present
       # This step runs the `test` script that is specified under the `scripts` key in your `package.json` file.
