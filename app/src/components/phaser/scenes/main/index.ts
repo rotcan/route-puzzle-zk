@@ -21,12 +21,12 @@ const createEmitter=()=>{
 
 export const EventBus=createEmitter();
 
-const totalWidth=1200;
+const totalWidth=window.innerWidth;
 const gridSize=GRID_SIZE;
 const width=64;
 const height=64;
 const color=0xE6896B;
-const sx=(totalWidth-width*gridSize/2)/2;
+const sx=(totalWidth)/2;
 const sy=5;
         
 export enum GameEvents{
@@ -69,7 +69,6 @@ export class MainPGame extends Phaser.Scene
         //this.add.image(400, 300, 'bg');
         //this.source=new Phaser.Math.Vector2(x-width*gridSize/2+width/2, y+height/2);
         const g1 = this.add.grid(sx, sy+height*gridSize/2, width*gridSize, height*gridSize, width, height, color);
-
         //const r1 = this.add.circle(source.x, source.y, width/2-5, 0x6666ff);
        
         

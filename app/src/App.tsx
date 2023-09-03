@@ -1,26 +1,26 @@
-import React, { useState } from 'react';
-import { PublicKey } from '@solana/web3.js';
-import logo from './logo.svg';
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
 import './App.css';
-import Wallet from './components/ui/Wallet';
-import Game from './components/ui/Game';
+import Home from './Home';
+require("@solana/wallet-adapter-react-ui/styles.css");
 
 function App() {
-  const [walletKey, setWalletKey] = useState<PublicKey | null>();
+  const endpoint=process.env.REACT_APP_URL;
+  const wallet = new PhantomWalletAdapter()
   return (
     <div className="App">
-      <header className="App-header">
-        <Wallet setWalletKey={setWalletKey} walletKey={walletKey}></Wallet>
-      </header>
-      <Game walletKey={walletKey}></Game>
-      {/* <div>
-        {walletKey && <Airdrop connection={connection} publicKey={walletKey} />}
+    {endpoint && 
+      <ConnectionProvider endpoint={endpoint}>
+              <WalletProvider wallets={[wallet]}>
+              <WalletModalProvider>
+              
+              <Home />
+              </WalletModalProvider>
+        </WalletProvider>
+        </ConnectionProvider>
+  }
       </div>
-      <div className='text-left padding10'>
-        {walletKey && <Vote connection={connection} programId={programId} />}
-
-      </div> */}
-    </div>
   );
 }
 

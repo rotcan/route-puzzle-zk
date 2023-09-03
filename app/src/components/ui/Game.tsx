@@ -1,16 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
-import SetupGame from "./SetupContract";
-import { ContractData, GameData, GameState, Players, getContractData, getGameData } from "../../contract/data";
-import { connection, getGameDataAddress } from "../../contract/instruction";
-import InitGame from "./InitGame";
-import '../phaser/index';
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { PublicKey } from "@solana/web3.js";
+import { useEffect, useMemo, useState } from "react";
+import { ContractData, GameData, Players, getContractData, getGameData } from "../../contract/data";
 import { getLatestGames } from "../../contract/helper";
+import {  getGameDataAddress } from "../../contract/instruction";
+import '../phaser/index';
+import { setAccountUpdateCallback } from "../solana/util";
 import Choose from "./Choose";
-import { createForfeitGameTxn } from "../../contract/transaction";
-import { getProvider, setAccountUpdateCallback } from "../solana/util";
+import SetupGame from "./SetupContract";
 
-const Game=({walletKey}:{walletKey: PublicKey | null | undefined})=>{
+const Game=()=>{
+    const {connection}=useConnection();
+    const {publicKey,connected}=useWallet();
     const [contractData,setContractData]=useState<ContractData|undefined>(undefined);
     const [player,setPlayer]=useState<Players | undefined> ();
     const [gameData,setGameData]=useState<GameData| undefined>();
@@ -27,10 +28,10 @@ const Game=({walletKey}:{walletKey: PublicKey | null | undefined})=>{
     },[]);
 
     useMemo(()=>{
-        if(walletKey){
+        if(publicKey && connected){
             setPlayer(undefined);
         }
-    },[walletKey])
+    },[publicKey,connected])
 
     useMemo(()=>{
         
@@ -71,7 +72,7 @@ const Game=({walletKey}:{walletKey: PublicKey | null | undefined})=>{
         
         {
        
-            contractData && walletKey &&
+            contractData && publicKey &&
             (
                 <>
                     {/* <InitGame contractData={contractData}></InitGame> */}
@@ -81,7 +82,7 @@ const Game=({walletKey}:{walletKey: PublicKey | null | undefined})=>{
                     <button  onClick={()=>{setPlayer(Players.Player2)}}>Player 2(Join Game)</button>
                     </>
                     }
-                    {player!==undefined && <Choose contractData={contractData} player={player} walletKey={walletKey}/>}
+                    {player!==undefined && <Choose contractData={contractData} player={player} walletKey={publicKey}/>}
                     <div id="game">
 
                     </div>

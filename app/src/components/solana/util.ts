@@ -1,5 +1,5 @@
-import { PublicKey, AccountChangeCallback, Connection } from "@solana/web3.js";
-import { PhantomProvider } from "./phantom";
+import { WalletContextState } from "@solana/wallet-adapter-react";
+import { AccountChangeCallback, Connection, PublicKey, Transaction, VersionedTransaction } from "@solana/web3.js";
 
 export function setAccountUpdateCallback(publicKey: PublicKey,
     callback: AccountChangeCallback,
@@ -7,10 +7,12 @@ export function setAccountUpdateCallback(publicKey: PublicKey,
     connection.onAccountChange(publicKey, callback);
 }
 
-export const getProvider = (): PhantomProvider | undefined => {
-    if ("solana" in window) {
-        // @ts-ignore
-        const provider = window.solana as any;
-        if (provider.isPhantom) return provider as PhantomProvider;
-    }
-};
+
+export interface WalletSigner{
+    publicKey: PublicKey | null;
+    signTransaction:  (<T extends Transaction | VersionedTransaction>(transaction: T) => Promise<T>) | undefined;
+}
+
+export const getWalletSigner=(wallet: WalletContextState)=>{
+    return {publicKey: wallet.publicKey,signTransaction: wallet.signTransaction} as WalletSigner;
+}

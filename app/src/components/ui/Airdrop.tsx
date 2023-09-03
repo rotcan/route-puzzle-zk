@@ -1,13 +1,14 @@
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useEffect, useState } from "react";
-import { commitment, connection } from "../../contract/instruction";
+import { commitment } from "../../contract/instruction";
 import { setAccountUpdateCallback } from "../solana/util";
+import { useConnection } from "@solana/wallet-adapter-react";
 
 
 const Airdrop = ({ publicKey }: {  publicKey: PublicKey }) => {
 
     const [balance, setBalance] = useState<number | null>(0);
-
+    const {connection}=useConnection();
 
     const doAirdrop = async () => {
         var airdropSignature = await connection.requestAirdrop(

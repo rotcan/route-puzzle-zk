@@ -1,17 +1,21 @@
 import { useMemo, useState } from "react";
 import { ContractData, GameData, GameState, Players, getGameData } from "../../contract/data";
-import { connection, createPlayerMoveIx, getGameDataAddress } from "../../contract/instruction";
+import {  createPlayerMoveIx, getGameDataAddress } from "../../contract/instruction";
 import { createForfeitGameTxn, createJoinGameTxn, playerMoveTxn } from "../../contract/transaction";
-import { getProvider, setAccountUpdateCallback } from "../solana/util";
+import {  getWalletSigner, setAccountUpdateCallback } from "../solana/util";
 import { EventBus, GameEvents, MainPGame } from "../phaser/scenes/main";
 import { PublicKey } from "@solana/web3.js";
 import { getCurrentTurn, getStateMsg, getWinnerMsg } from "../../contract/helper";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 const JoinGame=({contractData,walletKey}:{contractData: ContractData,walletKey: PublicKey | null | undefined })=>{
     const [gameCounter,setGameCounter]=useState<string| undefined>(undefined);
     const [showMove,setShowMove]=useState<boolean>(false);
     const [gameData,setGameData]=useState<GameData | undefined>(undefined);
     const [currentPos,setCurrentPos]=useState<{x:number,y:number} | undefined>(undefined);
+    const {connection}=useConnection();
+    const walletState=useWallet();
+    const walletSigner=getWalletSigner(walletState);
 
     const accountChangeCallback = async () => {
         if(gameCounter){
@@ -43,11 +47,11 @@ const JoinGame=({contractData,walletKey}:{contractData: ContractData,walletKey: 
             return;
         }
         await createJoinGameTxn({connection,counter:gameCounter!,
-            from: getProvider()!});
+            from: walletSigner});
     }
     const movePlayer=async()=>{
         console.log("p2GridPos",window.p2GridPos);
-        await playerMoveTxn({from: getProvider()!,connection, counter:gameCounter!,
+        await playerMoveTxn({from:walletSigner,connection, counter:gameCounter!,
             x:window.p2GridPos.x, y:window.p2GridPos.y,
         })
     }
@@ -105,7 +109,7 @@ const JoinGame=({contractData,walletKey}:{contractData: ContractData,walletKey: 
         if(gameData){
             await createForfeitGameTxn({
                 connection, counter: "0",
-                from: getProvider()!,
+                from: walletSigner,
                 player1: gameData.player1_account.toBase58(),
             })
         }

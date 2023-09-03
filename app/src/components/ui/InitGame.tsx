@@ -1,23 +1,28 @@
 import { useEffect, useMemo, useState } from "react";
 import { ContractData, CurrentGame, GameData, GameState, Players, getContractData, getCurrentGame, getGameData } from "../../contract/data";
 import { InitInput, MoveVerifyInput, generateRandomKey, makeInitProof, makePlayerMoveProof } from "../../contract/groth";
-import { connection, getGameDataAddress } from "../../contract/instruction";
+import {  getGameDataAddress } from "../../contract/instruction";
 import { createForfeitGameTxn, createInitializeGameTxn, playerMoveVerifyTxn } from "../../contract/transaction";
-import { getProvider, setAccountUpdateCallback } from "../solana/util";
+import {  getWalletSigner, setAccountUpdateCallback } from "../solana/util";
 import { GRID_SIZE, getCurrentTurn } from "../../contract/helper";
 import { PublicKey } from "@solana/web3.js";
 import { EventBus, GameEvents } from "../phaser/scenes/main";
 import './style.css';
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 
 
 const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefined,walletKey: PublicKey | null | undefined}) => {
     
     const [secretKey,setSecretKey]=useState<string | undefined>(undefined);
     // const [rSecretKey,setRSecretKey]=useState<string | undefined>(undefined);
-    const [moveCount,setMoveCount]=useState<string | undefined>(undefined);
+    const [moveCount,setMoveCount]=useState<string | undefined>("4");
+    const [moveTimeLimit,setMoveTimeLimit]=useState<string | undefined>("180");
     const [currentGame, setCurrentGame]=useState<CurrentGame | undefined>(undefined);
     const [gameData,setGameData]=useState<GameData | undefined>(undefined);
     const [hash,setHash]=useState<string | undefined>(undefined);
+    const {connection}=useConnection();
+    const walletState=useWallet();
+    const walletSigner=getWalletSigner(walletState);
 
     const loadCurrentGame=async()=>{
         const d=await getCurrentGame({connection,playerKey: walletKey!.toBase58()});
@@ -102,7 +107,7 @@ const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefin
             } as MoveVerifyInput,hash : gameData.target_position_hash});
             
             await playerMoveVerifyTxn({connection,counter: gameData.game_counter.toString(),
-            from: getProvider()!, proof, signals})
+            from: walletSigner, proof, signals})
         }
     }
     const generateKey=()=>{
@@ -126,7 +131,7 @@ const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefin
         if(gameData){
             await createForfeitGameTxn({
                 connection, counter: "0",
-                from: getProvider()!,
+                from: walletSigner,
                 player1: gameData.player1_account.toBase58(),
             })
         }
@@ -170,7 +175,7 @@ const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefin
             console.log("gridPos",window.p1GridPos);
             setHash(proof.pub);
             createInitializeGameTxn({connection,counter: contractData.game_counter.toString(),
-            from: getProvider()!,moves:4,proof: proof.proof,signals: proof.signals,timeout:600});
+            from: walletSigner,moves:4,proof: proof.proof,signals: proof.signals,timeout:600});
             //Set callback
             initCallback(contractData.game_counter.toString());
         }
@@ -196,6 +201,8 @@ const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefin
         </div>
         <div>
         <label>Move Count</label><input type="number" value={moveCount} placeholder="Move Count"  onChange={e=>{setMoveCount(e.target.value)}}></input>
+        
+        <label>Move Time Limit</label><input type="number" value={moveTimeLimit} placeholder="Move Time Limit"  onChange={e=>{setMoveTimeLimit(e.target.value)}}></input>
             <button className="InitGame" onClick={()=>InitGameClick()} >Init Game</button>
         </div>
         </div>

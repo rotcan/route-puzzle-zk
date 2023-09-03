@@ -1,21 +1,22 @@
-import { Connection, PublicKey } from "@solana/web3.js";
-import { useEffect, useState } from "react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { createSetupGameTxn } from "../../contract/transaction";
-import { connection } from "../../contract/instruction";
-import { getProvider } from "../solana/util";
-import { ContractData, getContractData } from "../../contract/data";
+import { getWalletSigner } from "../solana/util";
 
 
 const SetupGame = () => {
-   
+    const walletContext=useWallet();
+    const walletSignerObject=getWalletSigner(walletContext);
+    const {connection}=useConnection();
     const setupGameClick=async ()=>{
-        createSetupGameTxn(connection,getProvider()!)
+        createSetupGameTxn(connection,walletSignerObject)
         
     }
 
     return (<>
+    {
+    walletContext.connected && 
          <button onClick={()=>setupGameClick()} >SetupGame</button>
-
+    }
     </>)
 }
 

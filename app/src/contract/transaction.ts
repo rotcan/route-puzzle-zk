@@ -1,9 +1,8 @@
 import { ComputeBudgetProgram, Connection, SignatureResult, Transaction, TransactionInstruction } from "@solana/web3.js";
-import { PhantomProvider } from "../components/solana/phantom";
-import { createSetupInstruction } from "./instruction/setup";
 import { createForfeitGameIx, createInitializeGameIx, createJoinGameIx, createPlayerMoveIx, createPlayerMoveVerifyIx, createSetupGameIx } from "./instruction";
+import { WalletSigner } from "../components/solana/util";
 
-export const createSetupGameTxn = async (connection: Connection, from: PhantomProvider) => {
+export const createSetupGameTxn = async (connection: Connection, from: WalletSigner) => {
     
     const ix = await createSetupGameIx({player1: from!.publicKey!});
     return await sendAndConfirmTransaction({connection, from, ix});
@@ -11,7 +10,7 @@ export const createSetupGameTxn = async (connection: Connection, from: PhantomPr
 
 export const createInitializeGameTxn = async ({connection, counter, from,moves,
 proof, signals, timeout}:{
-    connection: Connection, from: PhantomProvider,counter: string, 
+    connection: Connection, from: WalletSigner,counter: string, 
         moves: number,
       timeout: number, signals: number[], proof: number[]}) => {
     
@@ -22,33 +21,33 @@ proof, signals, timeout}:{
 }
 
 export const createJoinGameTxn=async({connection, counter,from}:
-    {  connection: Connection, from: PhantomProvider,counter: string, })=>{
+    {  connection: Connection, from: WalletSigner,counter: string, })=>{
     const ix=await createJoinGameIx({counter,player2: from!.publicKey!});
     return await sendAndConfirmTransaction({connection, from, ix});
 }
 
 export const playerMoveTxn=async({connection, counter,from,x,y}:
-    {  connection: Connection, from: PhantomProvider,counter: string,x: number,y: number })=>{
+    {  connection: Connection, from: WalletSigner,counter: string,x: number,y: number })=>{
     const ix=await createPlayerMoveIx({counter,player2: from!.publicKey!,x,y});
     return await sendAndConfirmTransaction({connection, from, ix});
 }
 
 
 export const playerMoveVerifyTxn=async({connection, counter,from,signals,proof}:
-    {  connection: Connection, from: PhantomProvider,counter: string, signals: number[], proof: number[]})=>{
+    {  connection: Connection, from: WalletSigner,counter: string, signals: number[], proof: number[]})=>{
     const ix=await createPlayerMoveVerifyIx({counter,player1: from!.publicKey!,proof, signals});
     return await sendAndConfirmTransaction({connection, from, ix});
 }
 
 
 export const createForfeitGameTxn=async({connection, from,player1,counter}:
-    {  connection: Connection, from: PhantomProvider,counter: string, player1: string})=>{
+    {  connection: Connection, from: WalletSigner,counter: string, player1: string})=>{
     const ix=await createForfeitGameIx({counter,player: from!.publicKey!,player1: player1});
     return await sendAndConfirmTransaction({connection, from, ix});
 }
 
 const sendAndConfirmTransaction=async({connection, from, ix,cu = 0 }:
-    {ix: TransactionInstruction, connection: Connection, from: PhantomProvider, cu? : number}):Promise<SignatureResult>=>{
+    {ix: TransactionInstruction, connection: Connection, from: WalletSigner, cu? : number}):Promise<SignatureResult|undefined>=>{
     
   
           
@@ -73,16 +72,22 @@ const sendAndConfirmTransaction=async({connection, from, ix,cu = 0 }:
 
     // Transaction constructor initialized successfully
     if (tx) {
-        console.log("Txn created successfully");
+        console.log("Txn created successfully",tx,tx.feePayer.toBase58());
     }
-    // Request creator to sign the transaction (allow the transaction)
-    let signed = await from!.signTransaction(tx);
-    // The signature is generated
-    let signature = await connection.sendRawTransaction(signed.serialize());
-    // Confirm whether the transaction went through or not
-    console.log("signature",signature);
-    const response = await connection.confirmTransaction({ blockhash: blockhashObj.blockhash,
-        lastValidBlockHeight: blockhashObj.lastValidBlockHeight,signature},"finalized");
-    console.log(signature,response.value);
-    return response.value
+    // try{
+        // Request creator to sign the transaction (allow the transaction)
+        let signed = await from.signTransaction!(tx);
+        console.log("signed tx",signed);
+        // The signature is generated
+        let signature = await connection.sendRawTransaction(signed.serialize());
+        // Confirm whether the transaction went through or not
+        console.log("signature",signature);
+        const response = await connection.confirmTransaction({ blockhash: blockhashObj.blockhash,
+            lastValidBlockHeight: blockhashObj.lastValidBlockHeight,signature},"finalized");
+        console.log(signature,response.value);
+        return response.value
+    // }catch(e: any){
+    //     console.log("e",e);
+    //     return undefined;
+    // }
 }
