@@ -1,5 +1,6 @@
 # Sample workflow for building and deploying a Jekyll site to GitHub Pages
 name: Deploy Jekyll with GitHub Pages dependencies preinstalled
+
 on:
   # Runs on pushes targeting the default branch
   push:
@@ -25,22 +26,40 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: github-pages
+    # This job uses a matrix strategy to run the job four times, once for each specified Node version. For more information, see "[AUTOTITLE](/actions/using-jobs/using-a-matrix-for-your-jobs)."
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x, 18.x, 20.x]
+#
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      # This step uses the `actions/checkout` action to download a copy of your repository on the runner.
+      - uses: actions/checkout@v3
+      # This step uses the `actions/setup-node` action to set up Node.js for each version indicated by the `matrix.node-version` key above.
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
       - name: Show Admin
         run: echo "ADMIN is ${{vars.REACT_APP_ADMIN}}"
       - name: Show Url
         run: echo "Url is ${{vars.REACT_APP_URL}}"
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
+      - name: Create env file
+      - run: | 
+          cd app
+          touch .env
+          echo 'REACT_APP_URL=${{vars.REACT_APP_URL}}' > .env
+          echo 'REACT_APP_ADMIN=${{vars.REACT_APP_ADMIN}}' > .env
+      # This step runs `npm ci` to install any dependencies listed in your `package.json` file.
+      - name: Run npm
+      - run: |
+          npm ci
+          npm run build --if-present
+      # This step runs the `test` script that is specified under the `scripts` key in your `package.json` file.
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
         with:
-          source: ./app/dist/
-          destination: ./_site
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
+          source: ./build/
+          destination: ./../_site
 
   # Deployment job
   deploy:
