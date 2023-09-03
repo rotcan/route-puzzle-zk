@@ -1,53 +1,26 @@
-import { PublicKey } from "@solana/web3.js";
-import { PhantomProvider } from "../solana/phantom";
+import { useWallet } from "@solana/wallet-adapter-react";
 import Airdrop from "./Airdrop";
 
-const Wallet = ({ walletKey, setWalletKey }: { walletKey: PublicKey | null | undefined, setWalletKey: any }) => {
-
-
-
-
-    const connectWallet = async () => {
-        // @ts-ignore
-        const { solana } = window;
-        if (solana) {
-            try {
-                const response = await solana.connect();
-                console.log('wallet account ', response.publicKey);
-                setWalletKey(response.publicKey);
-            } catch (err) {
-                // { code: 4001, message: 'User rejected the request.' }
-            }
-        }
-    };
-
-    const disconnectWallet = async () => {
-        // @ts-ignore
-        const { solana } = window;
-
-        if (walletKey && solana) {
-            await (solana as PhantomProvider).disconnect();
-            setWalletKey(undefined);
-        }
-    };
-
+const Wallet = () => {
+    const {publicKey, disconnect}=useWallet();
     return (
         <>
             <div className="right">{
-                walletKey &&
+                publicKey &&
                 (
                     <>
                     <div>
-                    <span className="address padding10">{walletKey.toBase58()}</span>
-                    <button onClick={() => { disconnectWallet() }}>Disconnect</button>
+                    <span className="address padding10">{publicKey.toBase58()}</span>
+                    <button onClick={() => { disconnect() }}>Disconnect</button>
                     </div>
-                    <Airdrop publicKey={walletKey} ></Airdrop>
+                    <Airdrop publicKey={publicKey} ></Airdrop>
                     
                     </>
 
                 )
             }
-                {!walletKey && (<button onClick={() => { connectWallet() }}>Connect</button>)}</div>
+             
+            </div>
 
         </>
     )

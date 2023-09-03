@@ -12,12 +12,13 @@ import { createForfeitGameInstruction, forfeitAccounts } from "./instruction/for
 window.Buffer = buffer.Buffer
 
 export const PROGRAM_ID="A4RgxkoFpMWhsZn8DimLckU6c8s93cJRJg8sPKu3jRop";
-export const ADMIN="7Eru7TCcRuMxaZEBu6tVKBz8U3cqYrf7wqzuhSogfEve";
+export const ADMIN=process.env.REACT_APP_ADMIN!;
 export const PREFIX="ZKGame";
 export const GAME_PREFIX="ZKGameCurrent";
 //export const connection=new Connection("https://api.devnet.solana.com");
 export const commitment = "finalized";
-export const connection=new Connection("https://api.devnet.solana.com",{commitment});
+// export const connection=new Connection("https://api.devnet.solana.com",{commitment});
+//export const connection=new Connection("http://127.0.0.1:8899",{commitment});
 
 
 export const contractDataAddress=():string=>{
