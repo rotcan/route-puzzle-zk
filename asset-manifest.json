@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/route-puzzle-zk/static/css/main.cd646d27.css",
-    "main.js": "/route-puzzle-zk/static/js/main.d96e0dda.js",
-    "static/js/902.c5875df5.chunk.js": "/route-puzzle-zk/static/js/902.c5875df5.chunk.js",
+    "main.css": "/route-puzzle-zk/static/css/main.9d5615cf.css",
+    "main.js": "/route-puzzle-zk/static/js/main.0b448465.js",
+    "static/js/651.a19f6ef4.chunk.js": "/route-puzzle-zk/static/js/651.a19f6ef4.chunk.js",
     "index.html": "/route-puzzle-zk/index.html",
-    "main.cd646d27.css.map": "/route-puzzle-zk/static/css/main.cd646d27.css.map",
-    "main.d96e0dda.js.map": "/route-puzzle-zk/static/js/main.d96e0dda.js.map",
-    "902.c5875df5.chunk.js.map": "/route-puzzle-zk/static/js/902.c5875df5.chunk.js.map"
+    "main.9d5615cf.css.map": "/route-puzzle-zk/static/css/main.9d5615cf.css.map",
+    "main.0b448465.js.map": "/route-puzzle-zk/static/js/main.0b448465.js.map",
+    "651.a19f6ef4.chunk.js.map": "/route-puzzle-zk/static/js/651.a19f6ef4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.cd646d27.css",
-    "static/js/main.d96e0dda.js"
+    "static/css/main.9d5615cf.css",
+    "static/js/main.0b448465.js"
   ]
 }
