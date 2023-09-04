@@ -74,7 +74,7 @@ const sendAndConfirmTransaction=async({connection, from, ix,cu = 0 }:
     if (tx) {
         console.log("Txn created successfully",tx,tx.feePayer.toBase58());
     }
-    // try{
+    try{
         // Request creator to sign the transaction (allow the transaction)
         let signed = await from.signTransaction!(tx);
         console.log("signed tx",signed);
@@ -86,8 +86,8 @@ const sendAndConfirmTransaction=async({connection, from, ix,cu = 0 }:
             lastValidBlockHeight: blockhashObj.lastValidBlockHeight,signature},"finalized");
         console.log(signature,response.value);
         return response.value
-    // }catch(e: any){
-    //     console.log("e",e);
-    //     return undefined;
-    // }
+    }catch(e: any){
+        console.log("e",e);
+        return undefined;
+    }
 }
