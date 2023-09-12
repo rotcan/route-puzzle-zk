@@ -1,5 +1,7 @@
+import { GameObjects } from "phaser";
 import { GameState, Players } from "../../../../contract/data";
 import { GRID_SIZE } from "../../../../contract/helper";
+import { GridColors ,ColorType} from "../../../../utils/common";
 
 
 const roundPos=(x: number,y: number, startx: number, starty: number,
@@ -19,6 +21,11 @@ const createEmitter=()=>{
     return emitter;
 }
 
+interface RectData{
+    data: ColorType;
+    index: number;
+}
+
 export const EventBus=createEmitter();
 
 const totalWidth=window.innerWidth;
@@ -28,11 +35,18 @@ const height=64;
 const color=0xE6896B;
 const sx=(totalWidth)/2;
 const sy=5;
+const borderSize=1;
+
+const colors: Map<ColorType,number>=new Map<ColorType,number>();
+colors.set(ColorType.Neutral,0xE6896B);
+colors.set(ColorType.Correct,0x8EDD7C);
+colors.set(ColorType.InCorrect,0xDD7D7C);
         
 export enum GameEvents{
     Player1="create",
     Join="join",
     SetP2Pos="setP2Pos",
+    UpdateGrid="updateGrid",
 }
 
 export class MainPGame extends Phaser.Scene
@@ -47,10 +61,8 @@ export class MainPGame extends Phaser.Scene
     selectedItem: any | undefined;
 
     phys: any | undefined;
-
-    YOURFUNCTIONNAME() {
-        //DO SOMETHING
-    }
+    grid: GameObjects.Grid | undefined;
+    cells: Map<number,GameObjects.Rectangle>=new Map();
 
     super(){
         
@@ -68,7 +80,9 @@ export class MainPGame extends Phaser.Scene
     {
         //this.add.image(400, 300, 'bg');
         //this.source=new Phaser.Math.Vector2(x-width*gridSize/2+width/2, y+height/2);
-        const g1 = this.add.grid(sx, sy+height*gridSize/2, width*gridSize, height*gridSize, width, height, color);
+        // this.grid= this.add.grid(sx, sy+height*gridSize/2, width*gridSize, height*gridSize, width, height, 
+        //     color);
+        this.createGrid({x:sx,y:sy+height*gridSize/2+height/2},width,height,gridSize,gridSize,borderSize,ColorType.Neutral);
         //const r1 = this.add.circle(source.x, source.y, width/2-5, 0x6666ff);
        
         
@@ -81,10 +95,13 @@ export class MainPGame extends Phaser.Scene
         EventBus.on(GameEvents.Player1.toString(),this.createGame,this);
         EventBus.on(GameEvents.Join.toString(),this.joinGame,this);
         EventBus.on(GameEvents.SetP2Pos.toString(),this.setP2Pos,this)
-        
+        EventBus.on(GameEvents.UpdateGrid.toString(),this.updateGrid,this);
+
         this.input.on('pointerdown', (pointer: Phaser.Input.Pointer, objectsClicked: Phaser.GameObjects.GameObject[]) =>
         {
             const {x:nx,y:ny,gx, gy}=roundPos(pointer.x,pointer.y,sx-width*gridSize/2,sy,width,height);
+            if(gx>gridSize || gx<1 || gy>gridSize || gy<1)
+                return;
             this.target.x = nx;
             this.target.y = ny;
             console.log("x,y",gx,gy)
@@ -163,24 +180,48 @@ export class MainPGame extends Phaser.Scene
         console.log("gx,gy",gx,gy,this.target, this.p2.body.position);
         
     }
-    
-    update(time: number, delta: number): void {
-        const tolerance = 4;
-         
-
-        // const tolerance = 200 * 1.5 / this.game.loop.targetFps;
-        // if(this.p1){
-        //     const distance = Phaser.Math.Distance.BetweenPoints(this.p1, this.target);
-
-        //     if (this.p1.body.speed > 0)
-        //     {
-               
-        //         if (distance < tolerance)
-        //         {
-        //             this.p1.body.reset(this.target.x, this.target.y);
-        //         }
-        //     }
-        // }
+ 
+    createGrid(center:{x: number,y:number},cellWidth: number,cellHeight: number,rowCount: number,colCount: number,borderSize: number,data: ColorType){
+        this.cells.clear();
+        for(var i=0;i<rowCount;i++){
+            for(var j=0;j<colCount;j++){
+                //top left 
+                const borderCellWidth=(cellWidth); //+borderSize+borderSize
+                const borderCellHeight=(cellHeight); //+borderSize+borderSize
+                const normalCellWidth=(cellWidth-borderSize-borderSize);
+                const normalCellHeight=(cellHeight-borderSize-borderSize);
+                const cx=center.x-borderCellWidth*(colCount/2)-borderCellWidth/2 + (j+1)*borderCellWidth;
+                const cy=center.y-borderCellHeight*(rowCount/2)+ (i) * borderCellHeight;
+                const rect=this.add.rectangle(cx,cy,normalCellWidth,normalCellHeight,colors.get(data));
+                const index=((i)*colCount+(j));
+                rect.setData('type',{data: data, index:index} as RectData);
+                this.cells.set(index, rect);
+            }
+        }
+        // console.log("cells",this.cells);
+    }
+    updateGrid(data: GridColors){
+        console.log("data",data,this.cells);
+        if(this.cells.size>0){
+            for(const index of data.inCorrect){
+                const r=this.cells.get(index);
+                if(r){
+                    const d=r.getData('type') as RectData
+                    r.setData({...d, data:ColorType.InCorrect})
+                    r.setFillStyle(colors.get(ColorType.InCorrect),1);
+                }
+            }
+            for(const index of data.correct){
+                const r=this.cells.get(index);
+                if(r){
+                    const d=r.getData('type') as RectData
+                    if(data.reset===true || d.data==ColorType.Correct || d.data===ColorType.Neutral){
+                        r.setData({...d, data:ColorType.Correct});
+                        r.setFillStyle(colors.get(ColorType.Correct),1);
+                    }
+                }
+            }
+        }
     }
 }
 

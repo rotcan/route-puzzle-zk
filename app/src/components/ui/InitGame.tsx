@@ -9,6 +9,7 @@ import { PublicKey } from "@solana/web3.js";
 import { EventBus, GameEvents } from "../phaser/scenes/main";
 import './style.css';
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { Point, calculateGridSquares, testCalculateGridSquares } from "../../utils/common";
 
 
 const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefined,walletKey: PublicKey | null | undefined}) => {
@@ -23,7 +24,9 @@ const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefin
     const {connection}=useConnection();
     const walletState=useWallet();
     const walletSigner=getWalletSigner(walletState);
-
+    //Test
+    const [positionTest,setPositionTest]=useState<string>("");
+    
     const loadCurrentGame=async()=>{
         const d=await getCurrentGame({connection,playerKey: walletKey!.toBase58()});
         console.log("loadCurrentGame ",d);
@@ -181,6 +184,17 @@ const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefin
         }
     }
 
+    const testPos=()=>{
+        if(positionTest){
+            console.log("p1,p2",window.p1GridPos,window.p2GridPos);
+            console.log("positionTest",positionTest);
+            const pos=positionTest.split(",");
+            //@ts-ignore
+            const p3={x: +pos[0],y:+pos[1]} as Point;
+            const gc=testCalculateGridSquares({gridHeight: 8,gridWidth:8,newPoint: window.p2GridPos,oldPoint:window.p1GridPos,correctPoint: p3});
+            EventBus.emit(GameEvents.UpdateGrid,gc);
+        }
+    }
     return (<>
     {!currentGame &&
         <>
@@ -247,6 +261,8 @@ const InitGame = ({contractData,walletKey}:{contractData: ContractData | undefin
                             <button onClick={()=>{forfeitGame();}}>Forfeit Game</button>
                         </>
                     )}
+    <input onChange={(e)=>{setPositionTest(e.target.value)}} placeholder="Test pos"/>
+    <button onClick={()=>{testPos();}}>Test pos</button>
     </>)
 }
 
